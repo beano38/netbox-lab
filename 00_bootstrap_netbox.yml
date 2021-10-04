@@ -1,0 +1,84 @@
+---
+- name: Bootstrap Common parameters in Netbox
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  collections:
+    - netbox.netbox
+
+  pre_tasks:
+    - name: Load API variables
+      include_vars:
+        file: vars/api.yml
+        name: api
+    - name: Load Bootstrap variables
+      include_vars:
+        file: group_vars/bootstrap_vars.yml
+        name: bootstrap
+  
+  tasks:
+    - name: Setup Regions
+      netbox_region:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ bootstrap.regions }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Setup RIRs
+      netbox_rir:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: present
+      loop: "{{ bootstrap.rirs }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Setup Network Aggregates
+      netbox_aggregate:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: present
+      loop: "{{ bootstrap.aggregates }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['prefix'] }}"
+
+    - name: Setup Equipment Manufacturers
+      netbox_manufacturer:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: present
+      loop: "{{ bootstrap.manufacturers }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Setup Platforms
+      netbox_platform:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: present
+      loop: "{{ bootstrap.platforms }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Setup Device Roles
+      netbox_device_role:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: present
+      loop: "{{ bootstrap.device_roles }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"

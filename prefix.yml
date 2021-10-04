@@ -1,0 +1,152 @@
+---
+- name: Build Topology
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  collections:
+    - netbox.netbox
+
+  vars:
+    install_state: present
+
+  tasks:
+    - name: Load API variables
+      include_vars:
+        file: vars/api.yml
+        name: api
+    - name: Load Topology File
+      include_vars:
+        file: topologies/evpn.yml
+        name: topology
+
+    # Main Range for Region
+    - name: Create Primary Prefixes
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefixes }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['description'] }}"
+      register: primary
+
+    # V4 Ranges
+    - name: Create V4 Region Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 4
+          parent: "{{ primary.results.0.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v4_main }}"
+      loop_control:
+        loop_var: item
+      register: region_pool
+    
+    - name: Create V4 Core Pool Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 4
+          parent: "{{ region_pool.results.0.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v4_core }}"
+      loop_control:
+        loop_var: item
+
+    - name: Create V4 Access Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 4
+          parent: "{{ region_pool.results.1.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v4_access }}"
+      loop_control:
+        loop_var: item
+  
+    # V6 Ranges
+    - name: Create V6 Region Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 6
+          parent: "{{ primary.results.1.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v6_main }}"
+      loop_control:
+        loop_var: item
+      register: region_pool
+    
+    - name: Create V6 Core Pool Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 6
+          parent: "{{ region_pool.results.0.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v6_core }}"
+      loop_control:
+        loop_var: item
+
+    - name: Create V6 Access Ranges
+      netbox_prefix:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data:
+          description: "{{ item['description'] }}"
+          family: 6
+          parent: "{{ region_pool.results.1.prefix.prefix }}"
+          prefix_length: "{{ item['prefix_length'] }}"
+          is_pool: False
+          prefix_role: "{{ item['prefix_role'] }}"
+          site: "{{ item['site'] }}"
+          status: container
+        state: "{{ install_state }}"
+        first_available: True
+      loop: "{{ topology.netbox.prefix_pools_v6_access }}"
+      loop_control:
+        loop_var: item

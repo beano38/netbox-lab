@@ -1,0 +1,107 @@
+---
+- name: Tear Down Topology
+  connection: local
+  hosts: localhost
+  gather_facts: False
+  collections:
+    - netbox.netbox
+
+  vars:
+    install_state: absent
+
+  tasks:
+    - name: Load API variables
+      include_vars:
+        file: vars/api.yml
+        name: api
+    - name: Load Topology File
+      include_vars:
+        file: topologies/cst.yml
+        name: topology
+
+    # IPAM Info
+    - name: Remove IPAM Roles
+      netbox_ipam_role:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.ipam_roles }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    # Device Info
+    - name: Remove Devices
+      netbox_device:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.devices }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Remove Device Roles
+      netbox_device_role:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.device_roles }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    # Rack Info
+    - name: Remove Racks
+      netbox_rack:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.racks }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Remove Rack Groups
+      netbox_rack_group:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.rack_groups }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    # Site Info
+    - name: Remove Sites
+      netbox_site:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.sites }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+    - name: Remove Regions
+      netbox_region:
+        netbox_url: "{{ api.url }}"
+        netbox_token: "{{ api.token }}"
+        data: "{{ item }}"
+        state: "{{ install_state }}"
+      loop: "{{ topology.netbox.regions }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item['name'] }}"
+
+
+
+
+
+

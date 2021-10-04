@@ -1,0 +1,88 @@
+#######################################################################################################
+# Creates device templates with components using YAML file inputs formatted like those found at:
+# https://github.com/netbox-community/devicetype-library
+#
+# Author: Brandon Donohoe
+# Github: https://github.com/brandomando
+#
+#######################################################################################################
+
+
+- name: "Build Netbox device-types and interface templates"
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  collections:
+    - netbox.netbox
+
+  # `-e` or `--extra-vars` parameters can be defined in place of environment variables for netbox_url 
+  # and netbox_token as well as template_root. Default is environment vars
+  vars:
+    netbox_url: http://192.168.1.43:8000
+    netbox_token: 5f03557aa1b4c4386463b9e763799e2cf6436f41
+    template_root: "{{ template_dir | default('../device_types/') }}"
+
+  tasks:
+  - name: "Find files reccursively in root diretory {{ template_root }}"
+    find:
+      paths:
+        - "{{ template_root }}"
+      patterns:
+        - ".*\\.yml"
+        - ".*\\.yaml"
+      file_type: file
+      use_regex: yes
+      recurse: yes
+      depth: 2
+    register: template_files
+  
+  - name: "Parse file data for filenames from directory"
+    set_fact: template_files="{{ template_files.files | map(attribute='path') | list }}"
+
+  - name: "Get templates vars from imported files"
+    include_vars:
+      file: "{{ item }}"
+    with_items: "{{ template_files }}"
+    register: templates
+
+  - name: "Cleanup templates tree"
+    set_fact:
+      templates: "{{ templates.results | map(attribute='ansible_facts') | list }}"
+
+  - name: "Create set of manufacturers"
+    vars:
+      manufacturers: []
+    set_fact: manufacturers="{{ manufacturers + [item['manufacturer']] }}"
+    with_items: "{{ templates }}"
+    loop_control:
+      label: "{{ item['model'] }}"
+    
+  - name: "Deduplicate manufacturers list"
+    set_fact: manufacturers="{{ manufacturers | unique }}"
+  
+  - name: "Add manufacturers to Netbox"
+    netbox_manufacturer:
+      netbox_url: "{{ netbox_url }}"
+      netbox_token: "{{ netbox_token }}"
+      data:
+        name: "{{ item }}"
+    with_items: "{{ manufacturers }}"
+
+  - name: "Build device template in Netbox"
+    netbox_device_type:
+      netbox_url: "{{ netbox_url }}"
+      netbox_token: "{{ netbox_token }}"
+      data:
+        manufacturer: "{{ item['manufacturer'] }}"
+        model: "{{ item['model'] }}"
+        slug: "{{ item['slug'] }}"
+        u_height: "{{ item['u_height'] if defined | default(false) else omit  }}"
+        is_full_depth: "{{ item['is_full_depth'] if defined | default(false) else omit }}"
+      state: present
+    with_items: "{{ templates }}"
+    loop_control:
+      label: "{{ item['model'] }}"
+
+  - name: "Build component templates on device templates"
+    include_tasks: 01_create_device_component_templates.yaml
+    with_items: "{{ templates }}"

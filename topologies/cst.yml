@@ -1,0 +1,243 @@
+---
+netbox:
+
+  # Site Vars
+  regions:
+  - name: Louisville
+    slug: sdf
+    parent_region: ky
+  sites:
+    - name: Converged SDN Topology
+      slug: cst
+      time_zone: America/New_York
+      status: active
+      region: sdf
+      description: version 4.0
+      contact_name: Joe Shmoe
+      contact_email: you@me.com
+      contact_phone: 555-555-5555
+      asn: 65002
+
+  # Rack Info - Name is Floor and Row - R-01-01 = Rack on floor 1, row 1
+  rack_groups:
+    - name: R-01-01
+      slug: r0101
+      site: cst
+    - name: R-01-02
+      slug: r0102
+      site: cst
+    - name: R-01-03
+      slug: r0103
+      site: cst
+    - name: R-01-04
+      slug: r0104
+      site: cst
+    - name: R-02-01
+      slug: r0201
+      site: cst
+    - name: R-02-02
+      slug: r0202
+      site: cst
+    - name: R-02-03
+      slug: r0203
+      site: cst
+    - name: R-02-04
+      slug: r0204
+      site: cst
+  racks:
+    - name: R-01-01-01
+      rack_group: r0101
+      site: cst
+      status: active
+      type: 4-post cabinet
+      width: 19
+      u_height: 45
+    - name: R-01-01-02
+      rack_group: r0101
+      site: cst
+      status: active
+      type: 4-post cabinet
+      width: 19
+      u_height: 45
+    - name: R-01-01-03
+      rack_group: r0101
+      site: cst
+      status: active
+      type: 4-post cabinet
+      width: 19
+      u_height: 45
+
+  # Device Vars
+  device_roles:
+    - name: Access Provider Edge
+      slug: a-pe-rtr
+      color: ffeb3b
+      vm_role: false
+    - name: Aggregation
+      slug: agg-rtr
+      color: 4caf50
+      vm_role: false
+    - name: Pre-Aggregation
+      slug: pa-rtr
+      color: cddc39
+      vm_role: false
+    - name: Provider Edge Router
+      slug: pe-rtr
+      color: ff9800
+      vm_role: false
+    - name: Provider Router
+      slug: p-rtr
+      color: 03a9f4
+      vm_role: false
+    - name: Services Route Reflector
+      slug: srr-rtr
+      color: aa1409
+      vm_role: false
+    - name: Transport Route Reflector
+      slug: trr-rtr
+      color: 2196f3
+      vm_role: false
+  devices:
+    - name: P01-XR9KV
+      device_role: p-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: cst
+      status: active
+    - name: P02-XR9KV
+      device_role: p-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: cst
+      status: active
+    - name: PE01-XR9KV
+      device_role: pe-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: cst
+      status: active
+    - name: PE02-XR9KV
+      device_role: pe-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: cst
+      status: active
+    - name: RR01-XR9KV
+      device_role: trr-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: cst
+      status: active
+    - name: PA01-XR9KV
+      device_role: pa-rtr
+      device_type: csr1kv
+      platform: iosxe
+      site: cst
+      status: active
+
+  # IPAM Vars
+  ipam_roles:
+    - name: Primary Pool
+      slug: pri-pool
+    - name: Core Primary Pool
+      slug: core-pri-pool
+    - name: Access Primary Pool
+      slug: access-pri-pool
+    - name: Core-Interconnects
+      slug: core-interconnects
+    - name: Access-Interconnects
+      slug: access-interconnects
+    - name: Core-Loopbacks
+      slug: core-loopbacks
+    - name: Access-Loopbacks
+      slug: access-Loopbacks
+    - name: Interconnect
+      slug: interconnect
+  prefixes:
+    - description: Primary IPv4 Prefix
+      family: 4
+      parent: 172.16.0.0/12
+      prefix_length: 20
+      is_pool: False
+      status: container
+      prefix_role: pri-pool
+      site: cst
+    - description: Primary IPv6 Prefix
+      family: 6
+      parent: fd00::/8
+      prefix_length: 48
+      is_pool: False
+      status: container
+      prefix_role: pri-pool
+      site: cst
+
+  prefix_pools_v4_main:
+    - description: Core Range v4
+      prefix_length: 22
+      prefix_role: core-pri-pool
+      site: cst
+    - description: Access Range v4
+      prefix_length: 22
+      prefix_role: access-pri-pool
+      site: cst
+  prefix_pools_v4_core:
+    - description: Core Loopbacks v4
+      prefix_length: 26
+      prefix_role: core-loopbacks
+      site: cst
+    - description: Core Interconnects v4
+      prefix_length: 25
+      prefix_role: core-interconnects
+      site: cst
+  prefix_pools_v4_access:  
+    - description: Access Loopbacks v4
+      prefix_length: 26
+      prefix_role: access-loopbacks
+      site: cst
+    - description: Access Interconnects Range v4
+      prefix_length: 25
+      prefix_role: access-interconnects
+      site: cst
+
+  prefix_pools_v6_main:
+    - description: Core Range v6
+      prefix_length: 52
+      prefix_role: core-pri-pool
+      site: cst
+    - description: Access Range v6
+      prefix_length: 52
+      prefix_role: access-pri-pool
+      site: cst
+  prefix_pools_v6_core:
+    - description: Core Loopbacks v6
+      prefix_length: 64
+      prefix_role: core-loopbacks
+      site: cst
+    - description: Core Interconnects v6
+      prefix_length: 64
+      prefix_role: core-interconnects
+      site: cst
+  prefix_pools_v6_access:  
+    - description: Access Loopbacks v6
+      prefix_length: 64
+      prefix_role: access-loopbacks
+      site: cst
+    - description: Access Interconnects Range v6
+      prefix_length: 64
+      prefix_role: access-interconnects
+      site: cst
+
+
+cml:
+  lab:
+    title: Converged_SDN.yaml
+    description: xrdocs.io/design/blogs/latest-converged-sdn-transport-ig
+    notes: Converged SDN Transport version 4.0
+    version: 0.0.4
+  node_definitions:
+    - device_type: xr9kv
+      node_definition: iosxrv9000
+      image_definition: iosxrv9000-7-2-1
+    - device_type: csr1kv
+      node_definition: csr1000v
+      image_definition: csr1000v-170301a

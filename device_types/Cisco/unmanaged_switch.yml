@@ -1,0 +1,72 @@
+---
+manufacturer: Cisco
+model: Unmanaged Switch
+slug: cml_unmanaged_switch
+part_number: CML Unmanaged Switch
+u_height: 0
+is_full_depth: false
+interfaces:
+  - name: Port0
+    type: 1000base-t
+  - name: Port1
+    type: 1000base-t
+  - name: Port2
+    type: 1000base-t
+  - name: Port3
+    type: 1000base-t
+  - name: Port4
+    type: 1000base-t
+  - name: Port5
+    type: 1000base-t
+  - name: Port6
+    type: 1000base-t
+  - name: Port7
+    type: 1000base-t
+  - name: Port8
+    type: 1000base-t
+  - name: Port9
+    type: 1000base-t
+  - name: Port10
+    type: 1000base-t
+  - name: Port11
+    type: 1000base-t
+  - name: Port12
+    type: 1000base-t
+  - name: Port13
+    type: 1000base-t
+  - name: Port14
+    type: 1000base-t
+  - name: Port15
+    type: 1000base-t
+  - name: Port16
+    type: 1000base-t
+  - name: Port17
+    type: 1000base-t
+  - name: Port18
+    type: 1000base-t
+  - name: Port19
+    type: 1000base-t
+  - name: Port20
+    type: 1000base-t
+  - name: Port21
+    type: 1000base-t
+  - name: Port22
+    type: 1000base-t
+  - name: Port23
+    type: 1000base-t
+  - name: Port24
+    type: 1000base-t
+  - name: Port25
+    type: 1000base-t
+  - name: Port26
+    type: 1000base-t
+  - name: Port27
+    type: 1000base-t
+  - name: Port28
+    type: 1000base-t
+  - name: Port29
+    type: 1000base-t
+  - name: Port30
+    type: 1000base-t
+  - name: Port31
+    type: 1000base-t

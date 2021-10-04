@@ -1,0 +1,119 @@
+---
+netbox:
+
+  # Site Vars
+  regions:
+  - name: Charlestown
+    slug: chls
+    parent_region: in
+  sites:
+    - name: Home
+      slug: home_network
+      time_zone: America/New_York
+      status: active
+      region: chls
+      description: version 4.0
+      contact_name: Joe Shmoe
+      contact_email: you@me.com
+      contact_phone: 555-555-5555
+      asn: 65555
+
+  # Rack Info - Name is Floor and Row - R-01-01 = Rack on floor 1, row 1
+  rack_groups:
+    - name: R-00-01
+      slug: r0001
+      site: home_network
+  racks:
+    - name: R-00-01-01
+      rack_group: r0001
+      site: home_network
+      status: active
+      type: 4-post cabinet
+      width: 19
+      u_height: 15
+
+  # Device Vars
+  device_roles:
+    - name: Core Switch
+      slug: cr-sw
+      color: ffeb3b
+      vm_role: false
+    - name: Access Point
+      slug: ap
+      color: 4caf50
+      vm_role: false
+    - name: Core Router
+      slug: cr-rtr
+      color: cddc39
+      vm_role: false
+  devices:
+    - name: SW1
+      device_role: cr-sw
+      device_type: 14
+      platform: iosxe
+      site: home_network
+      rack: R-00-01-01
+      position: 14
+      face: front
+      status: active
+    - name: SW1-Uplink-Mod
+      device_role: cr-sw
+      device_type: c3kx-nm-1g
+      platform: iosxe
+      site: home_network
+      rack: R-00-01-01
+      status: active
+    - name: SW2
+      device_role: cr-sw
+      device_type: 14
+      platform: iosxe
+      site: home_network
+      rack: R-00-01-01
+      position: 11
+      face: front
+      status: active
+    - name: SW2-Uplink-Mod
+      device_role: cr-sw
+      device_type: c3kx-nm-1g
+      platform: iosxe
+      site: home_network
+      rack: R-00-01-01
+      status: active
+
+  # IPAM Vars
+  ipam_roles:
+    - name: Primary Pool
+      slug: pri-pool
+  prefixes:
+    - description: Primary IPv4 Prefix
+      family: 4
+      parent: 172.16.0.0/16
+      prefix_length: 20
+      is_pool: True
+      status: container
+      prefix_role: pri-pool
+      site: home
+    - description: Primary IPv6 Prefix
+      family: 6
+      parent: fd00::/8
+      prefix_length: 64
+      is_pool: True
+      status: container
+      prefix_role: pri-pool
+      site: home
+  
+
+
+cml:
+  lab:
+    title: Converged_SDN.yaml
+    description: xrdocs.io/design/blogs/latest-converged-sdn-transport-ig
+    notes: Converged SDN Transport version 4.0
+    version: 0.0.4
+  node_definitions:
+    - device_type: xr9kv
+      node_definition: iosxrv9000
+      image_definition: iosxrv9000-7-2-1
+    - device_type: csr1kv
+      node_definition: csr1000v
+      image_definition: csr1000v-170301a
