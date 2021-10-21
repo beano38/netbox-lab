@@ -11,6 +11,9 @@ regions:
   - name: CA
     slug: ca
     parent_region: us
+  - name: PA
+    slug: pa
+    parent_region: us
 
 rirs:
   - name: RFC-1918

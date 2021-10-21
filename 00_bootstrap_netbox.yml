@@ -22,7 +22,7 @@
         netbox_url: "{{ api.url }}"
         netbox_token: "{{ api.token }}"
         data: "{{ item }}"
-        state: "{{ install_state }}"
+        # state: "{{ install_state }}"
       loop: "{{ bootstrap.regions }}"
       loop_control:
         loop_var: item

@@ -3,69 +3,20 @@ netbox:
 
   # Site Vars
   regions:
-  - name: Jeffersonville
-    slug: jfvl
-    parent_region: in
+  - name: Ephrata
+    slug: eph
+    parent_region: pa
   sites:
     - name: EVPN Test Topology
       slug: evpn
       time_zone: America/New_York
       status: active
-      region: jfvl
+      region: eph
       description: version 4.0
       contact_name: Joe Shmoe
       contact_email: you@me.com
       contact_phone: 555-555-5555
       asn: 65003
-
-  # Rack Info - Name is Floor and Row - R-01-01 = Rack on floor 1, row 1
-  rack_groups:
-    - name: R-01-01
-      slug: evpn-r0101
-      site: evpn
-    - name: R-01-02
-      slug: evpn-r0102
-      site: evpn
-    - name: R-01-03
-      slug: evpn-r0103
-      site: evpn
-    - name: R-01-04
-      slug: evpn-r0104
-      site: evpn
-    - name: R-02-01
-      slug: evpn-r0201
-      site: evpn
-    - name: R-02-02
-      slug: evpn-r0202
-      site: evpn
-    - name: R-02-03
-      slug: evpn-r0203
-      site: evpn
-    - name: R-02-04
-      slug: evpn-r0204
-      site: evpn
-  racks:
-    - name: R-01-01-01
-      rack_group: evpn-r0101
-      site: evpn
-      status: active
-      type: 4-post cabinet
-      width: 19
-      u_height: 45
-    - name: R-01-01-02
-      rack_group: evpn-r0101
-      site: evpn
-      status: active
-      type: 4-post cabinet
-      width: 19
-      u_height: 45
-    - name: R-01-01-03
-      rack_group: evpn-r0101
-      site: evpn
-      status: active
-      type: 4-post cabinet
-      width: 19
-      u_height: 45
 
   # Device Vars
   device_roles:
@@ -117,6 +68,18 @@ netbox:
       site: evpn
       status: active
     - name: EVPN-PE1-RTR
+      device_role: pe-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: evpn
+      status: active
+    - name: EVPN-PE2-RTR
+      device_role: pe-rtr
+      device_type: xr9kv
+      platform: iosxr
+      site: evpn
+      status: active
+    - name: EVPN-PE3-RTR
       device_role: pe-rtr
       device_type: xr9kv
       platform: iosxr
@@ -213,18 +176,3 @@ netbox:
       prefix_length: 64
       prefix_role: access-interconnects
       site: evpn
-
-
-cml:
-  lab:
-    title: EVPN.yaml
-    description: xrdocs.io/design/blogs/latest-converged-sdn-transport-ig
-    notes: EVPN
-    version: 0.0.4
-  node_definitions:
-    - device_type: xr9kv
-      node_definition: iosxrv9000
-      image_definition: iosxrv9000-7-2-1
-    - device_type: csr1kv
-      node_definition: csr1000v
-      image_definition: csr1000v-170301a

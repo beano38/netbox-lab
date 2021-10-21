@@ -18,8 +18,8 @@
   # `-e` or `--extra-vars` parameters can be defined in place of environment variables for netbox_url 
   # and netbox_token as well as template_root. Default is environment vars
   vars:
-    netbox_url: http://192.168.1.43:8000
-    netbox_token: 5f03557aa1b4c4386463b9e763799e2cf6436f41
+    netbox_url: http://127.0.0.1:8000
+    netbox_token: 0123456789abcdef0123456789abcdef01234567
     template_root: "{{ template_dir | default('../device_types/') }}"
 
   tasks:
